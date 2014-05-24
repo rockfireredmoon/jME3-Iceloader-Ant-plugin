@@ -32,11 +32,10 @@ So, to create indexes and encrypt the assets, you use the provided Ant plugin. A
 something like the following to your _build-impl.xml_
 
 ```
-    <taskdef name="astproc"
-        classname="icemoon.iceloader.ant.AssetProcessor"
-        classpath="lib/Iceloader-Ant.jar"/>
-    
-    <target name="compile-assets">
+    <target name="compile-assets" depends="init">
+        <taskdef name="astproc"
+            classname="icemoon.iceloader.ant.AssetProcessor"
+            classpath="${javac.classpath}"/>
         <astproc encrypt="true" index="true" srcdir="assets" destdir="enc_assets"/>
     </target>
 
