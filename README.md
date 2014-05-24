@@ -31,7 +31,7 @@ the assets you supply with your game are to be encrypted).
 So, to create indexes and encrypt the assets, you use the provided Ant plugin. Add 
 something like the following to your _build-impl.xml_
 
-<pre>
+```
     <taskdef name="astproc"
         classname="icemoon.iceloader.ant.AssetProcessor"
         classpath="lib/Iceloader-Ant.jar"/>
@@ -40,7 +40,7 @@ something like the following to your _build-impl.xml_
         <astproc encrypt="true" index="true" srcdir="assets" destdir="enc_assets"/>
     </target>
 
-</pre>
+```
 
 This will create the directory _enc_assets_, you can then upload this entire direwctory
 to any HTTP server and use EncryptedServerLocator in your locator list (see below for 
