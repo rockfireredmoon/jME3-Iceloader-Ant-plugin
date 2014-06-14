@@ -32,7 +32,6 @@ public class AssetProcessor extends Task {
 
     @Override
     public void execute() throws BuildException {
-
         // Encrypt all assets
         if (encrypt) {
             try {
@@ -47,10 +46,14 @@ public class AssetProcessor extends Task {
         // reflections is not possible - i.e. when loaded from server on-the-fly)
         if (index) {
             try {
-                final File indexFile = new File(destDir, "index.dat");
-                PrintWriter indexWriter = new PrintWriter(new FileOutputStream(indexFile), true);
+                File indexFileObject = new File(destDir, "index.dat");
+                PrintWriter indexWriter = new PrintWriter(new FileOutputStream(indexFileObject), true);
                 try {
-                    index(indexWriter, indexFile, destDir, destDir);
+                    if (!encrypt) {
+                        index(indexWriter, indexFileObject, srcDir, srcDir);
+                    } else {
+                        index(indexWriter, indexFileObject, destDir, destDir);
+                    }
                 } finally {
                     indexWriter.close();
                 }
@@ -64,8 +67,8 @@ public class AssetProcessor extends Task {
     public static void main(String[] args) {
     }
 
-    private void index(PrintWriter indexWriter, File indexFile, File rootDir, File destDir) throws IOException {
-        for (File f : destDir.listFiles()) {
+    private void index(PrintWriter indexWriter, File indexFile, File rootDir, File dirToIndex) throws IOException {
+        for (File f : dirToIndex.listFiles()) {
             if (!f.equals(indexFile)) {
                 if (f.isFile()) {
                     log(String.format("Indexing %s", f));
