@@ -36,7 +36,7 @@ something like the following to your _build-impl.xml_
         <taskdef name="astproc"
             classname="icemoon.iceloader.ant.AssetProcessor"
             classpath="${javac.classpath}"/>
-        <astproc encrypt="true" index="true" srcdir="assets" destdir="enc_assets"/>
+        <astproc encrypt="true" index="true" srcdir="assets" destdir="enc_assets" simplePassword="password123?" simpleSalt="12345678"/>
     </target>
 
 ```
@@ -44,3 +44,19 @@ something like the following to your _build-impl.xml_
 This will create the directory _enc_assets_, you can then upload this entire direwctory
 to any HTTP server and use EncryptedServerLocator in your locator list (see below for 
 how to configure the location of the server).
+
+## Task attributes
+
+The task supports the following attributes.
+
+| Name  | Type | Default | Description |
+| ----- | ---- | ------- | ----------- |
+| encrypt | boolean | true | Determines whether assets will will be encrypted. |
+| index | boolean | true | Determines whether assets will will be indexed. |
+| srcDir | Path | Required | Source location of assets. |
+| destDir | Path | Required | Destination location of assets. |
+| encryptionContextClassName | Class name | Optional | Fully qualified class name of a custom EncryptionContext (must be on tasks classpath). |
+| simplePassword | String | Optional | When default EncryptionContext is in use, the password to use for encryption key. |
+| simpleSalt | String | Optional | When default EncryptionContext is in use, the salt to use for encryption key. |
+| magic | String | !@ENC/PF_0 | Header used for encrypted files. |
+| cipher | String | AES/CFB8/NoPadding | Cipher to use for encrypting files. |

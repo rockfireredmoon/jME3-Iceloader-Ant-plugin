@@ -1,9 +1,11 @@
 package icemoon.iceloader.ant;
 
+import icemoon.iceloader.EncryptionContext;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.crypto.spec.SecretKeySpec;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -13,9 +15,30 @@ public class AssetProcessor extends Task {
     private File destDir;
     private boolean encrypt = true;
     private boolean index = true;
+    private Class<? extends EncryptionContext> context;
+    private String simpleSalt;
+    private String simplePassword;
+    private String magic;
+    private String cipher;
 
     public void setEncrypt(boolean encrypt) {
         this.encrypt = encrypt;
+    }
+
+    public void setEncryptionContextClassName(String className) {
+        try {
+            context = (Class<? extends EncryptionContext>) Class.forName(className, true, getClass().getClassLoader());
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException("Failed to set encryption context class name to " + className + ".", ex);
+        }
+    }
+
+    public void setSimplePassword(String password) {
+        this.simplePassword = password;
+    }
+
+    public void setSimpleSalt(String salt) {
+        this.simpleSalt = salt;
     }
 
     public void setIndex(boolean index) {
@@ -30,8 +53,58 @@ public class AssetProcessor extends Task {
         this.destDir = destDir;
     }
 
+    public void setMagic(String magic) {
+        this.magic = magic;
+    }
+
+    public void setCipher(String cipher) {
+        this.cipher = cipher;
+    }
+
     @Override
     public void execute() throws BuildException {
+        if (simplePassword != null || simpleSalt != null) {
+            if (simplePassword == null) {
+                throw new BuildException("If you provide simpleSalt, you must also provide simplePassword.");
+            }
+            if (simpleSalt == null) {
+                throw new BuildException("If you provide simplePassword, you must also provide simpleSalt.");
+            }
+            if (context != null) {
+                throw new BuildException("Cannot use a custom encryption context if you provide simplePassword or simpleSalt.");
+            }
+            try {
+                final EncryptionContext defContext = EncryptionContext.get();
+                EncryptionContext.set(new EncryptionContext() {
+                    @Override
+                    public SecretKeySpec createKey() throws Exception {
+                        return createKey(simplePassword, simpleSalt);
+                    }
+
+                    @Override
+                    public String getMagic() {
+                        return magic == null ? defContext.getMagic() : magic;
+                    }
+
+                    @Override
+                    public String getCipher() {
+                        return cipher == null ? defContext.getCipher() : cipher;
+                    }
+                });
+            } catch (Exception e) {
+                throw new BuildException("Failed to set custom encryption context.");
+            }
+
+        } else {
+            if (context != null) {
+                try {
+                    EncryptionContext.set(context.newInstance());
+                } catch (Exception e) {
+                    throw new BuildException("Failed to set custom encryption context.");
+                }
+            }
+        }
+
         // Encrypt all assets
         if (encrypt) {
             try {
