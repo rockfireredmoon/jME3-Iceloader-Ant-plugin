@@ -1,5 +1,7 @@
 package icemoon.iceloader.ant;
 
+import icemoon.iceloader.tools.AbstractCrypt;
+
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,15 +9,15 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.AlgorithmParameters;
 import java.util.logging.Logger;
+
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
 import org.apache.commons.io.IOUtils;
 
 public class EncryptDir extends AbstractCrypt {
-
-    private static final Logger LOG = Logger.getLogger(EncryptDir.class.getName());
 
     public static void main(String[] args) throws Exception {
         EncryptDir ed = new EncryptDir(new File(args[0]), new File(args[1]));
