@@ -1,11 +1,14 @@
 package icemoon.iceloader.ant;
 
 import icemoon.iceloader.EncryptionContext;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import javax.crypto.spec.SecretKeySpec;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 

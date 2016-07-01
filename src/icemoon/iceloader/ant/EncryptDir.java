@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.AlgorithmParameters;
-import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
